@@ -1,0 +1,128 @@
+apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+
+// ---------------------------------------------------------------------------
+// Google Services (Firebase)
+//
+// >>> PUT YOUR REAL google-services.json IN THIS FOLDER: android/app/google-services.json <<<
+//
+// The plugin below reads that file at build time. If the file is missing the build
+// FAILS with "File google-services.json is missing" -- that is intentional, because an
+// APK built without it cannot receive push notifications. The Firebase app you download
+// it from must have the Android package name  com.teamsalert.app .
+// See android/app/google-services.json.PLACEHOLDER.txt and README.md.
+// ---------------------------------------------------------------------------
+apply plugin: "com.google.gms.google-services"
+
+/**
+ * This is the configuration block to customize your React Native Android app.
+ * By default you don't need to apply any configuration, just uncomment the lines you need.
+ */
+react {
+    /* Autolinking */
+    autolinkLibrariesWithApp()
+}
+
+/**
+ * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
+ */
+def enableProguardInReleaseBuilds = false
+
+/**
+ * The preferred build flavor of JavaScriptCore (JSC). Only used if hermesEnabled=false.
+ */
+def jscFlavor = 'org.webkit:android-jsc:+'
+
+// ---------------------------------------------------------------------------
+// Release signing -- read from android/keystore.properties (NOT committed).
+// Copy android/keystore.properties.example to android/keystore.properties and fill it in.
+// `storeFile` is resolved relative to THIS folder (android/app/).
+// ---------------------------------------------------------------------------
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def hasKeystoreProperties = keystorePropertiesFile.exists()
+def keystoreProperties = new Properties()
+if (hasKeystoreProperties) {
+    keystorePropertiesFile.withInputStream { stream -> keystoreProperties.load(stream) }
+}
+
+android {
+    ndkVersion rootProject.ext.ndkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
+
+    namespace "com.teamsalert.app"
+    defaultConfig {
+        applicationId "com.teamsalert.app"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+    }
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        if (hasKeystoreProperties) {
+            release {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            // Signed with the key from android/keystore.properties. If that file is
+            // absent the signing config is null and the task graph check below stops
+            // `assembleRelease` / `bundleRelease` with a readable error.
+            signingConfig hasKeystoreProperties ? signingConfigs.release : null
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+}
+
+dependencies {
+    // The version of react-native is set by the React Native Gradle Plugin
+    implementation("com.facebook.react:react-android")
+
+    if (hermesEnabled.toBoolean()) {
+        implementation("com.facebook.react:hermes-android")
+    } else {
+        implementation jscFlavor
+    }
+}
+
+// Fail early, with a clear message, when a release build is requested without usable signing info.
+gradle.taskGraph.whenReady { graph ->
+    def releaseRequested = graph.hasTask(":app:assembleRelease") || graph.hasTask(":app:bundleRelease")
+    if (!releaseRequested) {
+        return
+    }
+    if (!hasKeystoreProperties) {
+        throw new GradleException(
+            "Release build requested but android/keystore.properties was not found.\n" +
+            "Copy android/keystore.properties.example to android/keystore.properties and fill in " +
+            "storeFile, storePassword, keyAlias and keyPassword (see README.md)."
+        )
+    }
+    ["storeFile", "storePassword", "keyAlias", "keyPassword"].each { key ->
+        if (!keystoreProperties[key]) {
+            throw new GradleException("android/keystore.properties is missing a value for '" + key + "'.")
+        }
+    }
+    if (!file(keystoreProperties['storeFile']).exists()) {
+        throw new GradleException(
+            "Keystore file not found: " + file(keystoreProperties['storeFile']) + "\n" +
+            "'storeFile' in android/keystore.properties is resolved relative to android/app/."
+        )
+    }
+}

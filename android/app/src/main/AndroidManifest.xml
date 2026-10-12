@@ -1,0 +1,68 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Networking / push -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Android 13+ runtime permission, requested at launch from JS (PermissionsAndroid). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Incoming-call style alert -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
+
+    <!-- Telecom (react-native-callkeep, self-managed phone account).
+         Some of these are also added by react-native-callkeep's own manifest; they are
+         repeated here on purpose so they are guaranteed to be present. -->
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
+    <!-- callkeep's manifest declares READ_PHONE_STATE with maxSdkVersion=29; remove that cap
+         so the declaration is unconditional. The app never *requests* it at runtime (see README). -->
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        tools:remove="android:maxSdkVersion" />
+
+    <application
+      android:name=".MainApplication"
+      android:label="@string/app_name"
+      android:icon="@mipmap/ic_launcher"
+      android:roundIcon="@mipmap/ic_launcher_round"
+      android:allowBackup="false"
+      android:theme="@style/AppTheme"
+      android:supportsRtl="true">
+
+      <activity
+        android:name=".MainActivity"
+        android:label="@string/app_name"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+        android:launchMode="singleTask"
+        android:windowSoftInputMode="adjustResize"
+        android:showWhenLocked="true"
+        android:turnScreenOn="true"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+      </activity>
+
+      <!-- react-native-callkeep: the Telecom ConnectionService. The library's own manifest
+           does NOT declare this, so it must be declared here. -->
+      <service
+        android:name="io.wazo.callkeep.VoiceConnectionService"
+        android:label="@string/app_name"
+        android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE"
+        android:foregroundServiceType="phoneCall"
+        android:exported="true">
+        <intent-filter>
+          <action android:name="android.telecom.ConnectionService" />
+        </intent-filter>
+      </service>
+
+      <!-- Handles the "Decline" button on the ringing notification (works with the app killed). -->
+      <receiver
+        android:name=".CallActionReceiver"
+        android:exported="false" />
+    </application>
+</manifest>

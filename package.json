@@ -1,0 +1,33 @@
+{
+  "name": "TeamsAlert",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "start": "react-native start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "1.24.0",
+    "@react-native-firebase/app": "21.14.0",
+    "@react-native-firebase/messaging": "21.14.0",
+    "react": "18.3.1",
+    "react-native": "0.76.9",
+    "react-native-callkeep": "4.3.16"
+  },
+  "devDependencies": {
+    "@babel/core": "7.25.2",
+    "@babel/preset-env": "7.25.3",
+    "@babel/runtime": "7.25.0",
+    "@react-native-community/cli": "15.0.1",
+    "@react-native-community/cli-platform-android": "15.0.1",
+    "@react-native/babel-preset": "0.76.9",
+    "@react-native/metro-config": "0.76.9",
+    "@react-native/typescript-config": "0.76.9",
+    "@types/react": "18.3.12",
+    "typescript": "5.0.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

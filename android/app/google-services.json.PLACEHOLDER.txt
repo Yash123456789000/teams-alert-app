@@ -1,0 +1,15 @@
+PLACEHOLDER -- this is NOT the Firebase config file.
+
+Put your real Firebase config in THIS folder, named exactly:
+
+    android/app/google-services.json
+
+How to get it:
+  1. Firebase console -> your project -> Project settings -> "Your apps".
+  2. Add (or open) the Android app whose package name is exactly:  com.teamsalert.app
+  3. Download google-services.json and drop it next to this file.
+
+Until it exists, `./gradlew assembleDebug|assembleRelease` fails with
+"File google-services.json is missing" (this is intentional).
+
+You can delete this placeholder file once the real one is in place.
