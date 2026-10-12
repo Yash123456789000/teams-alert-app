@@ -1,5 +1,6 @@
 # TeamsAlert (Android)
-
+Shared secret- 38abac0567f36f388adb318041f87b2917c2eab8545b936d80f14458628e02bb
+url- https://teamsalert-ddaecre7enfngue3.southindia-01.azurewebsites.net
 Personal Android app that turns a Firebase Cloud Messaging push into a **ringing, full-screen
 "incoming call" alert** when a specific person messages you on Microsoft Teams.
 
