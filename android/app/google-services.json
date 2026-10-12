@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "123414144779",
+    "project_id": "teams-alert-3fdc4",
+    "storage_bucket": "teams-alert-3fdc4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123414144779:android:cb7f14c12b23fd6c54640e",
+        "android_client_info": {
+          "package_name": "com.teamsalert.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZM4IIYLvsyEDeE4QQgPMDP2jtlf80e8M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
